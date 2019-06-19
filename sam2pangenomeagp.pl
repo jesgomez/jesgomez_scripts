@@ -8,10 +8,12 @@ use Getopt::Long;
 #email: jessica.gomez@cnag.crg.eu
 #Date:20190528
 
-my ($sam);
+my ($sam,$reference, $plasmid);
 
 GetOptions(
            's:s'           => \$sam,
+           'ref:s'       => \$reference,
+           'pl:s'         => \$plasmid            
            );
 
 open SAM,"< $sam" || die "cannot open input file $sam";
@@ -20,7 +22,7 @@ while (<SAM>){
   chomp;
   next if ($_ =~ m/^@/);
   my @line = split /\t/, $_;
-  if ($line[0] =~ m/HS61/){
+  if ($line[0] =~ m/$plasmid/){
     my @cigar = split //, $line[5];
     my $cigar_len = scalar @cigar;
     my $i = 0;
@@ -38,7 +40,7 @@ while (<SAM>){
         $l = int($l);
         print "Pangenome\t$res_pos\t";
         $res_pos = $res_pos + $l - 1;
-        print "$res_pos\t$f\tW\tCP011017.1\t$ref_pos\t";
+        print "$res_pos\t$f\tW\t$reference\t$ref_pos\t";
         $f++;
         $ref_pos = $ref_pos + $l - 1;
         print "$ref_pos\t+\n";
@@ -51,7 +53,7 @@ while (<SAM>){
         $l = int($l);
         print "Pangenome\t$res_pos\t";
         $res_pos = $res_pos + $l - 1;
-        print "$res_pos\t$f\tW\tHS61_plasmid\t$aln_pos\t";
+        print "$res_pos\t$f\tW\t$plasmid\t$aln_pos\t";
         $f++;
         $aln_pos = $aln_pos + $l - 1;
         print "$aln_pos\t+\n";
@@ -63,7 +65,7 @@ while (<SAM>){
         $l = int($l);
         print "Pangenome\t$res_pos\t";
         $res_pos = $res_pos + $l - 1;
-        print "$res_pos\t$f\tW\tCP011017.1\t$ref_pos\t";
+        print "$res_pos\t$f\tW\t$reference\t$ref_pos\t";
         $f++;
         $ref_pos = $ref_pos + $l - 1;
         print "$ref_pos\t+\n";
